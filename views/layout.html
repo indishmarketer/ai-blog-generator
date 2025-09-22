@@ -1,39 +1,66 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>AI Blog Generator</title>
-  <link rel="stylesheet" href="/public/styles.css" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AI Blog Generator - Transform YouTube Videos into SEO-Ready Posts</title>
+  <meta name="description" content="Convert YouTube transcripts into professional blog posts with AI. Edit, optimize, and export HTML content instantly.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/public/styles.css">
 </head>
 <body>
-  <div class="site-shell">
+  <div class="app-wrapper">
     <header class="site-header">
-      <div class="wrap" style="display:flex;align-items:center;justify-content:space-between;">
-        <a class="brand" href="/">AI Blog Generator</a>
-        <nav class="site-nav" aria-label="Main navigation">
-          <a href="/">Home</a>
-          <a href="/signup">Sign up</a>
-          <a href="/login">Login</a>
-        </nav>
+      <div class="container">
+        <div class="header-inner">
+          <a href="/" class="logo">
+            <svg class="logo-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+              <line x1="16" y1="13" x2="8" y2="13"/>
+              <line x1="16" y1="17" x2="8" y2="17"/>
+              <polyline points="10 9 9 9 8 9"/>
+            </svg>
+            <span class="logo-text">AI Blog Generator</span>
+          </a>
+          <nav class="nav-menu">
+            <a href="/" class="nav-link">Home</a>
+            <a href="/dashboard" class="nav-link">Dashboard</a>
+            <a href="/signup" class="nav-link nav-cta">Get Started</a>
+          </nav>
+        </div>
       </div>
     </header>
 
-    <main class="site-main wrap">
-      {{content}}
+    <main class="main-content">
+      <div class="container">
+        {{content}}
+      </div>
     </main>
 
     <footer class="site-footer">
-      <div class="wrap footer-inner">
-        <div>Built with OpenAI</div>
-        <div>•</div>
-        <div>Deploy on Coolify</div>
+      <div class="container">
+        <div class="footer-inner">
+          <div class="footer-brand">
+            <svg class="footer-logo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+            </svg>
+            <span>AI Blog Generator</span>
+          </div>
+          <div class="footer-links">
+            <span>Powered by OpenAI</span>
+            <span class="footer-dot">•</span>
+            <span>Deploy on Coolify</span>
+          </div>
+        </div>
       </div>
     </footer>
   </div>
 
   <script>
-    // small helpers available to templates
     function copyToClipboard(text) {
       const textarea = document.createElement('textarea');
       textarea.value = text;
@@ -43,7 +70,17 @@
       textarea.select();
       document.execCommand('copy');
       document.body.removeChild(textarea);
-      alert('Copied to clipboard!');
+      
+      // Show toast notification
+      const toast = document.createElement('div');
+      toast.className = 'toast';
+      toast.textContent = '✓ Copied to clipboard!';
+      document.body.appendChild(toast);
+      setTimeout(() => toast.classList.add('show'), 100);
+      setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => document.body.removeChild(toast), 300);
+      }, 2000);
     }
 
     function downloadPost(postId) {
@@ -52,3 +89,117 @@
   </script>
 </body>
 </html>
+
+--- FILE: views/index.html ---
+<div class="hero-section">
+  <div class="hero-content">
+    <h1 class="hero-title">
+      Transform YouTube Videos into
+      <span class="hero-highlight">SEO-Ready Blog Posts</span>
+    </h1>
+    <p class="hero-subtitle">
+      Paste a YouTube URL or transcript and let AI create professional, editable blog content in seconds.
+    </p>
+    <div class="hero-actions">
+      <a href="/signup" class="btn btn-primary btn-large">
+        <span>Start Free</span>
+        <svg class="btn-arrow" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z"/>
+        </svg>
+      </a>
+      <a href="/login" class="btn btn-secondary btn-large">Sign In</a>
+    </div>
+  </div>
+</div>
+
+<div class="features-grid">
+  <div class="feature-card">
+    <div class="feature-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polygon points="23 7 16 12 23 17 23 7"/>
+        <rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>
+      </svg>
+    </div>
+    <h3 class="feature-title">YouTube Integration</h3>
+    <p class="feature-text">
+      Simply paste any YouTube URL or transcript. Our system handles the rest, extracting content intelligently.
+    </p>
+  </div>
+
+  <div class="feature-card">
+    <div class="feature-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+        <circle cx="9" cy="10" r="1"/>
+        <circle cx="12" cy="10" r="1"/>
+        <circle cx="15" cy="10" r="1"/>
+      </svg>
+    </div>
+    <h3 class="feature-title">AI-Powered Content</h3>
+    <p class="feature-text">
+      Advanced AI transforms spoken content into structured, readable blog posts with proper formatting.
+    </p>
+  </div>
+
+  <div class="feature-card">
+    <div class="feature-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+      </svg>
+    </div>
+    <h3 class="feature-title">Edit & Export</h3>
+    <p class="feature-text">
+      Full editing capabilities with live preview. Download as HTML or copy to clipboard instantly.
+    </p>
+  </div>
+</div>
+
+<div class="cta-section">
+  <h2 class="cta-title">Ready to Start Creating?</h2>
+  <p class="cta-text">Join thousands of content creators saving hours every week.</p>
+  <a href="/signup" class="btn btn-primary btn-large">Create Your Account</a>
+</div>
+
+--- FILE: views/signup.html ---
+<div class="auth-page">
+  <div class="auth-card">
+    <div class="auth-header">
+      <h1 class="auth-title">Create Account</h1>
+      <p class="auth-subtitle">Start generating AI-powered blog posts today</p>
+    </div>
+
+    {{#error}}
+    <div class="alert alert-error">
+      <svg class="alert-icon" viewBox="0 0 20 20" fill="currentColor">
+        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"/>
+      </svg>
+      <span>{{error}}</span>
+    </div>
+    {{/error}}
+
+    <form method="POST" action="/signup" class="auth-form">
+      <div class="form-group">
+        <label for="name" class="form-label">Full Name</label>
+        <input type="text" id="name" name="name" class="form-input" placeholder="John Doe" required>
+      </div>
+
+      <div class="form-group">
+        <label for="email" class="form-label">Email Address</label>
+        <input type="email" id="email" name="email" class="form-input" placeholder="john@example.com" required>
+      </div>
+
+      <div class="form-group">
+        <label for="password" class="form-label">Password</label>
+        <input type="password" id="password" name="password" class="form-input" placeholder="••••••••" required minlength="6">
+        <p class="form-hint">Must be at least 6 characters</p>
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-full">Create Account</button>
+    </form>
+
+    <div class="auth-footer">
+      <p>Already have an account? <a href="/login" class="link">Sign in</a></p>
+    </div>
+  </div>
+</div>

@@ -1,12 +1,23 @@
-<section class="auth">
-  <h2>Login</h2>
-  {{error}}
-  <form method="POST" action="/login" class="form">
-    <label>Email</label>
-    <input name="email" type="email" required>
-    <label>Password</label>
-    <input name="password" type="password" required>
-    <button type="submit" class="btn">Login</button>
+<div class="auth-container card">
+  <h2>Log In</h2>
+
+  {{#error}}
+  <div class="alert alert-error">{{error}}</div>
+  {{/error}}
+
+  <form method="POST" action="/login" class="auth-form">
+    <div class="form-group">
+      <label for="email">Email Address</label>
+      <input type="email" id="email" name="email" required />
+    </div>
+
+    <div class="form-group">
+      <label for="password">Password</label>
+      <input type="password" id="password" name="password" required />
+    </div>
+
+    <button type="submit" class="btn btn-primary btn-block">Log In</button>
   </form>
-  <p>New user? <a href="/signup">Create an account</a></p>
-</section>
+
+  <p class="auth-footer small">Don't have an account? <a href="/signup">Sign up</a></p>
+</div>

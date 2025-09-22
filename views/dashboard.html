@@ -1,84 +1,86 @@
-<div class="dashboard">
-    <div class="welcome">
-        <h2>Welcome, {{userName}}!</h2>
-        <a href="/logout" class="btn btn-sm">Logout</a>
-    </div>
-    
-    <div class="generate-section">
-        <h3>Generate New Blog Post</h3>
-        
-        <div id="generate-form">
-            <div class="form-group">
-                <label for="youtube_url">YouTube URL</label>
-                <input type="url" id="youtube_url" placeholder="https://youtube.com/watch?v=..." required>
-            </div>
-            
-            <div class="form-group">
-                <label for="ai_model">AI Model</label>
-                <select id="ai_model">
-                    <option value="OpenAI">OpenAI (GPT-4)</option>
-                    <option value="Gemini">Gemini (Coming Soon)</option>
-                </select>
-            </div>
-            
-            <button onclick="generateBlog()" class="btn btn-primary" id="generate-btn">Generate Blog</button>
-            
-            <div id="status-message"></div>
-        </div>
-    </div>
-    
-    <div class="posts-section">
-        <h3>Your Blog Posts</h3>
-        <div id="posts-list">
-            {{posts}}
-        </div>
-    </div>
-</div>
+<section>
+  <h2>Welcome, {{userName}}</h2>
+
+  <div class="card">
+    <h3>Generate from YouTube URL</h3>
+    <form id="youtube-form">
+      <label for="youtube_url">YouTube URL</label>
+      <input id="youtube_url" name="youtube_url" placeholder="https://www.youtube.com/watch?v=..." style="width:100%">
+      <label for="ai_model">Model</label>
+      <select id="ai_model" name="ai_model">
+        <option value="OpenAI" selected>OpenAI</option>
+        <option value="Gemini">Gemini (stub)</option>
+      </select>
+      <button id="youtube-generate" type="button" class="btn">Generate Blog</button>
+    </form>
+    <div id="youtube-result"></div>
+  </div>
+
+  <div class="card">
+    <h3>Generate from pasted transcript (recommended)</h3>
+    <p>On YouTube: click the three dots → <strong>Open transcript</strong> → copy text → paste here.</p>
+    <form id="transcript-form">
+      <textarea id="transcript-input" name="transcript" rows="10" style="width:100%" placeholder="Paste transcript here..."></textarea>
+      <label for="ai_model_transcript">Model</label>
+      <select id="ai_model_transcript" name="ai_model">
+        <option value="OpenAI" selected>OpenAI</option>
+        <option value="Gemini">Gemini (stub)</option>
+      </select>
+      <button id="transcript-generate" type="button" class="btn">Generate Blog</button>
+    </form>
+    <div id="transcript-result"></div>
+  </div>
+
+  <hr>
+  <h3>Your Posts</h3>
+  <div id="posts-list">
+    {{posts}}
+  </div>
+
+  <p><a href="/logout" class="btn">Logout</a></p>
+</section>
 
 <script>
-async function generateBlog() {
-    const youtubeUrl = document.getElementById('youtube_url').value;
-    const aiModel = document.getElementById('ai_model').value;
-    const statusDiv = document.getElementById('status-message');
-    const generateBtn = document.getElementById('generate-btn');
-    
-    if (!youtubeUrl) {
-        alert('Please enter a YouTube URL');
-        return;
-    }
-    
-    // Disable button and show status
-    generateBtn.disabled = true;
-    generateBtn.textContent = 'Generating...';
-    statusDiv.innerHTML = '<div class="alert alert-info">Processing video... This may take a minute.</div>';
-    
+  async function postJson(url, body) {
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify(body)
+    });
+    return res.json();
+  }
+
+  document.getElementById('youtube-generate').addEventListener('click', async () => {
+    const btn = document.getElementById('youtube-generate');
+    btn.disabled = true;
+    btn.innerText = 'Generating...';
+    const url = document.getElementById('youtube_url').value.trim();
+    const model = document.getElementById('ai_model').value;
+    if (!url) { alert('Enter YouTube URL'); btn.disabled=false; btn.innerText='Generate Blog'; return; }
     try {
-        const response = await fetch('/generate', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                youtube_url: youtubeUrl,
-                ai_model: aiModel
-            })
-        });
-        
-        const data = await response.json();
-        
-        if (data.success) {
-            statusDiv.innerHTML = `<div class="alert alert-success">Blog post generated successfully! <a href="/posts/${data.postId}/edit">View/Edit</a></div>`;
-            document.getElementById('youtube_url').value = '';
-            // Reload page after 2 seconds to show new post
-            setTimeout(() => window.location.reload(), 2000);
-        } else {
-            statusDiv.innerHTML = `<div class="alert alert-error">${data.error}</div>`;
-        }
-    } catch (error) {
-        statusDiv.innerHTML = '<div class="alert alert-error">An error occurred. Please try again.</div>';
-    } finally {
-        generateBtn.disabled = false;
-        generateBtn.textContent = 'Generate Blog';
-    }
-}
+      const data = await postJson('/generate', { youtube_url: url, ai_model: model });
+      if (data.success) window.location.href = `/posts/${data.postId}/edit`;
+      else alert(data.error || 'Failed to generate');
+    } catch (err) {
+      console.error(err);
+      alert('Error generating from YouTube');
+    } finally { btn.disabled=false; btn.innerText='Generate Blog'; }
+  });
+
+  document.getElementById('transcript-generate').addEventListener('click', async () => {
+    const btn = document.getElementById('transcript-generate');
+    btn.disabled = true;
+    btn.innerText = 'Generating...';
+    const txt = document.getElementById('transcript-input').value.trim();
+    const model = document.getElementById('ai_model_transcript').value;
+    if (!txt || txt.length < 20) { alert('Paste a transcript'); btn.disabled=false; btn.innerText='Generate Blog'; return; }
+    try {
+      const data = await postJson('/generate-from-transcript', { transcript: txt, ai_model: model });
+      if (data.success) window.location.href = `/posts/${data.postId}/edit`;
+      else alert(data.error || 'Failed to generate');
+    } catch (err) {
+      console.error(err);
+      alert('Error generating from transcript');
+    } finally { btn.disabled=false; btn.innerText='Generate Blog'; }
+  });
 </script>

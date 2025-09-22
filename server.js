@@ -1,4 +1,3 @@
-// server.js - full file (paste to overwrite your existing server.js)
 const express = require('express');
 const Database = require('better-sqlite3');
 const bcrypt = require('bcrypt');
@@ -411,3 +410,4 @@ app.listen(PORT, HOST, () => {
   console.log(`🤖 AI Provider: ${process.env.AI_PROVIDER || 'OPENAI'}`);
   console.log(`🔐 Environment: ${process.env.NODE_ENV || 'development'}`);
 });
+

@@ -1,0 +1,98 @@
+<div class="edit-container">
+    <h2>Edit Blog Post</h2>
+    
+    <div class="edit-actions">
+        <button onclick="savePost()" class="btn btn-primary">Save Changes</button>
+        <button onclick="copyContent()" class="btn">Copy to Clipboard</button>
+        <button onclick="downloadPost({{postId}})" class="btn">Download HTML</button>
+        <a href="/dashboard" class="btn">Back to Dashboard</a>
+    </div>
+    
+    <div id="save-status"></div>
+    
+    <form id="edit-form">
+        <div class="form-group">
+            <label>Title</label>
+            <input type="text" id="title" value="{{title}}" />
+        </div>
+        
+        <div class="form-group">
+            <label>Meta Description (SEO)</label>
+            <textarea id="meta_description" rows="2">{{metaDescription}}</textarea>
+        </div>
+        
+        <div class="form-group">
+            <label>SEO Keywords</label>
+            <input type="text" id="seo_keywords" value="{{seoKeywords}}" />
+        </div>
+        
+        <div class="form-group">
+            <label>Summary</label>
+            <textarea id="summary" rows="3">{{summary}}</textarea>
+        </div>
+        
+        <div class="form-group">
+            <label>Content (HTML)</label>
+            <textarea id="content_html" rows="20">{{content}}</textarea>
+        </div>
+        
+        <div class="form-group">
+            <label>Source YouTube URL</label>
+            <input type="url" value="{{youtubeUrl}}" readonly disabled />
+        </div>
+    </form>
+    
+    <div class="preview-section">
+        <h3>Preview</h3>
+        <div id="preview" class="preview-box">
+            {{content}}
+        </div>
+    </div>
+</div>
+
+<script>
+// Update preview when content changes
+document.getElementById('content_html').addEventListener('input', function() {
+    document.getElementById('preview').innerHTML = this.value;
+});
+
+async function savePost() {
+    const statusDiv = document.getElementById('save-status');
+    statusDiv.innerHTML = '<div class="alert alert-info">Saving...</div>';
+    
+    const data = {
+        title: document.getElementById('title').value,
+        meta_description: document.getElementById('meta_description').value,
+        seo_keywords: document.getElementById('seo_keywords').value,
+        summary: document.getElementById('summary').value,
+        content_html: document.getElementById('content_html').value
+    };
+    
+    try {
+        const response = await fetch('/posts/{{postId}}/save', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            statusDiv.innerHTML = '<div class="alert alert-success">Saved successfully!</div>';
+        } else {
+            statusDiv.innerHTML = '<div class="alert alert-error">Failed to save</div>';
+        }
+    } catch (error) {
+        statusDiv.innerHTML = '<div class="alert alert-error">An error occurred</div>';
+    }
+}
+
+function copyContent() {
+    const title = document.getElementById('title').value;
+    const content = document.getElementById('content_html').value;
+    const fullContent = `<h1>${title}</h1>\n${content}`;
+    copyToClipboard(fullContent);
+}
+</script>

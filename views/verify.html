@@ -1,13 +1,26 @@
-<div class="verify-container card">
-  <div class="alert {{#type}}{{#success}}alert-success{{/success}}{{#error}}alert-error{{/error}}{{/type}}">
-    <h2 style="margin-bottom:6px;">
-      {{#type}}{{#success}}✅{{/success}}{{#error}}❌{{/error}}{{/type}}
-      Email Verification
-    </h2>
-    <p>{{message}}</p>
+--- FILE: views/verify.html ---
+<div class="verify-page">
+  <div class="verify-card">
+    <div class="verify-icon {{#type}}{{#success}}success{{/success}}{{#error}}error{{/error}}{{/type}}">
+      {{#type}}{{#success}}
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+        <polyline points="22 4 12 14.01 9 11.01"/>
+      </svg>
+      {{/success}}{{#error}}
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10"/>
+        <line x1="15" y1="9" x2="9" y2="15"/>
+        <line x1="9" y1="9" x2="15" y2="15"/>
+      </svg>
+      {{/error}}{{/type}}
+    </div>
+    
+    <h1 class="verify-title">Email Verification</h1>
+    <p class="verify-message">{{message}}</p>
 
     {{#showLogin}}
-    <a href="/login" class="btn btn-primary">Go to Login</a>
+    <a href="/login" class="btn btn-primary btn-large">Continue to Login</a>
     {{/showLogin}}
   </div>
 </div>

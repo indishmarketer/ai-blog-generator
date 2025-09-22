@@ -1,98 +1,52 @@
-<div class="edit-container">
-    <h2>Edit Blog Post</h2>
-    
-    <div class="edit-actions">
-        <button onclick="savePost()" class="btn btn-primary">Save Changes</button>
-        <button onclick="copyContent()" class="btn">Copy to Clipboard</button>
-        <button onclick="downloadPost({{postId}})" class="btn">Download HTML</button>
-        <a href="/dashboard" class="btn">Back to Dashboard</a>
+<section>
+  <h2>Edit Post</h2>
+  <form id="post-save-form">
+    <input id="title" name="title" value="{{title}}" style="width:100%" />
+    <label>Meta description</label>
+    <input id="meta_description" name="meta_description" value="{{metaDescription}}" style="width:100%" />
+    <label>SEO keywords (comma separated)</label>
+    <input id="seo_keywords" name="seo_keywords" value="{{seoKeywords}}" style="width:100%" />
+    <label>Summary</label>
+    <textarea id="summary" name="summary" rows="3" style="width:100%">{{summary}}</textarea>
+    <label>Content (HTML)</label>
+    <textarea id="content_html" name="content_html" rows="15" style="width:100%">{{content}}</textarea>
+
+    <div style="margin-top:10px;">
+      <button type="button" id="save-btn" class="btn">Save</button>
+      <a id="download-btn" class="btn" href="/posts/{{postId}}/download">Download HTML</a>
+      <a href="/dashboard" class="btn">Back to Dashboard</a>
     </div>
-    
-    <div id="save-status"></div>
-    
-    <form id="edit-form">
-        <div class="form-group">
-            <label>Title</label>
-            <input type="text" id="title" value="{{title}}" />
-        </div>
-        
-        <div class="form-group">
-            <label>Meta Description (SEO)</label>
-            <textarea id="meta_description" rows="2">{{metaDescription}}</textarea>
-        </div>
-        
-        <div class="form-group">
-            <label>SEO Keywords</label>
-            <input type="text" id="seo_keywords" value="{{seoKeywords}}" />
-        </div>
-        
-        <div class="form-group">
-            <label>Summary</label>
-            <textarea id="summary" rows="3">{{summary}}</textarea>
-        </div>
-        
-        <div class="form-group">
-            <label>Content (HTML)</label>
-            <textarea id="content_html" rows="20">{{content}}</textarea>
-        </div>
-        
-        <div class="form-group">
-            <label>Source YouTube URL</label>
-            <input type="url" value="{{youtubeUrl}}" readonly disabled />
-        </div>
-    </form>
-    
-    <div class="preview-section">
-        <h3>Preview</h3>
-        <div id="preview" class="preview-box">
-            {{content}}
-        </div>
-    </div>
-</div>
+  </form>
+</section>
 
 <script>
-// Update preview when content changes
-document.getElementById('content_html').addEventListener('input', function() {
-    document.getElementById('preview').innerHTML = this.value;
-});
-
-async function savePost() {
-    const statusDiv = document.getElementById('save-status');
-    statusDiv.innerHTML = '<div class="alert alert-info">Saving...</div>';
-    
-    const data = {
-        title: document.getElementById('title').value,
-        meta_description: document.getElementById('meta_description').value,
-        seo_keywords: document.getElementById('seo_keywords').value,
-        summary: document.getElementById('summary').value,
-        content_html: document.getElementById('content_html').value
+  document.getElementById('save-btn').addEventListener('click', async () => {
+    const btn = document.getElementById('save-btn');
+    btn.disabled = true;
+    btn.innerText = 'Saving...';
+    const payload = {
+      title: document.getElementById('title').value,
+      meta_description: document.getElementById('meta_description').value,
+      seo_keywords: document.getElementById('seo_keywords').value,
+      summary: document.getElementById('summary').value,
+      content_html: document.getElementById('content_html').value
     };
-    
+    const id = '{{postId}}';
     try {
-        const response = await fetch('/posts/{{postId}}/save', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
-        });
-        
-        const result = await response.json();
-        
-        if (result.success) {
-            statusDiv.innerHTML = '<div class="alert alert-success">Saved successfully!</div>';
-        } else {
-            statusDiv.innerHTML = '<div class="alert alert-error">Failed to save</div>';
-        }
-    } catch (error) {
-        statusDiv.innerHTML = '<div class="alert alert-error">An error occurred</div>';
+      const res = await fetch(`/posts/${id}/save`, {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      if (data.success) alert('Saved!');
+      else alert('Save failed');
+    } catch (err) {
+      console.error(err);
+      alert('Error saving');
+    } finally {
+      btn.disabled = false;
+      btn.innerText = 'Save';
     }
-}
-
-function copyContent() {
-    const title = document.getElementById('title').value;
-    const content = document.getElementById('content_html').value;
-    const fullContent = `<h1>${title}</h1>\n${content}`;
-    copyToClipboard(fullContent);
-}
+  });
 </script>

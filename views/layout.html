@@ -1,19 +1,15 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>AI Blog Generator</title>
-
-  <!-- Google font -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
-
-  <link rel="stylesheet" href="/public/styles.css">
+  <link rel="stylesheet" href="/public/styles.css" />
 </head>
 <body>
   <div class="site-shell">
     <header class="site-header">
-      <div class="wrap">
+      <div class="wrap" style="display:flex;align-items:center;justify-content:space-between;">
         <a class="brand" href="/">AI Blog Generator</a>
         <nav class="site-nav" aria-label="Main navigation">
           <a href="/">Home</a>
@@ -35,5 +31,24 @@
       </div>
     </footer>
   </div>
+
+  <script>
+    // small helpers available to templates
+    function copyToClipboard(text) {
+      const textarea = document.createElement('textarea');
+      textarea.value = text;
+      textarea.style.position = 'fixed';
+      textarea.style.opacity = '0';
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textarea);
+      alert('Copied to clipboard!');
+    }
+
+    function downloadPost(postId) {
+      window.location.href = `/posts/${postId}/download`;
+    }
+  </script>
 </body>
 </html>

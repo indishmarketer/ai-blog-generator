@@ -1,26 +1,29 @@
+// package.json
 {
   "name": "ai-blog-generator",
-  "version": "1.0.0",
-  "description": "AI Blog Generator from YouTube Videos",
+  "version": "1.0.1",
+  "description": "AI Blog Generator from YouTube transcripts (paste-transcript MVP)",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
     "dev": "node server.js"
   },
-  "keywords": ["blog", "youtube", "ai", "openai"],
+  "keywords": ["blog", "youtube", "ai", "openai", "transcript"],
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "express": "^4.18.2",
+    "axios": "^1.6.0",
     "better-sqlite3": "^9.2.2",
     "bcrypt": "^5.1.1",
+    "cookie-parser": "^1.4.6",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "form-data": "^4.0.0",
     "jsonwebtoken": "^9.0.2",
     "nodemailer": "^6.9.7",
-    "dotenv": "^16.3.1",
-    "cookie-parser": "^1.4.6",
-    "youtube-transcript": "^1.2.1",
     "openai": "^4.24.0",
-    "sanitize-html": "^2.11.0"
+    "sanitize-html": "^2.11.0",
+    "youtube-transcript": "^1.2.1"
   },
   "engines": {
     "node": ">=18.0.0"

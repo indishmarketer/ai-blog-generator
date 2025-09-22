@@ -1,9 +1,0 @@
-# nixpacks.toml — force NodeJS provider for Nixpacks
-[project]
-name = "ai-blog-generator"
-
-[[providers]]
-name = "nodejs"
-
-[phases.start]
-cmd = "npm start"

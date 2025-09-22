@@ -1,110 +1,169 @@
-<div class="dashboard card">
-  <div class="welcome">
-    <h2>Welcome, {{userName}}!</h2>
-    <a href="/logout" class="btn btn-sm">Logout</a>
+--- FILE: views/dashboard.html ---
+<div class="dashboard">
+  <div class="dashboard-header">
+    <div class="dashboard-welcome">
+      <h1 class="dashboard-title">Welcome back, {{userName}}!</h1>
+      <p class="dashboard-subtitle">Create and manage your AI-generated blog posts</p>
+    </div>
+    <a href="/logout" class="btn btn-ghost">Sign Out</a>
   </div>
 
-  <div class="generate-section">
-    <h3>Generate from YouTube URL</h3>
-
-    <div class="form-group">
-      <label for="youtube_url">YouTube URL</label>
-      <input type="url" id="youtube_url" placeholder="https://youtube.com/watch?v=..." />
+  <div class="generator-section">
+    <div class="generator-tabs">
+      <button class="tab-button active" onclick="switchTab('url')">YouTube URL</button>
+      <button class="tab-button" onclick="switchTab('transcript')">Transcript</button>
     </div>
 
-    <div style="display:flex;gap:12px;align-items:center;margin-bottom:12px">
-      <select id="ai_model" style="width:220px;padding:10px;border-radius:8px;border:1px solid #e6e9ee">
-        <option value="OpenAI">OpenAI (GPT-4)</option>
-        <option value="Gemini">Gemini (Coming Soon)</option>
-      </select>
-      <button onclick="generateFromUrl()" class="btn btn-primary" id="generate-url-btn">Generate Blog</button>
+    <div id="url-tab" class="tab-content active">
+      <div class="generator-card">
+        <h2 class="generator-title">Generate from YouTube URL</h2>
+        <p class="generator-desc">Paste a YouTube video URL and we'll extract the content automatically.</p>
+        
+        <div class="form-group">
+          <label for="youtube_url" class="form-label">YouTube URL</label>
+          <input type="url" id="youtube_url" class="form-input" placeholder="https://youtube.com/watch?v=...">
+        </div>
+
+        <div class="generator-controls">
+          <select id="ai_model" class="form-select">
+            <option value="OpenAI">OpenAI (GPT-4)</option>
+            <option value="Gemini">Gemini (Coming Soon)</option>
+          </select>
+          <button onclick="generateFromUrl()" class="btn btn-primary" id="generate-url-btn">
+            <svg class="btn-icon" viewBox="0 0 20 20" fill="currentColor">
+              <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"/>
+            </svg>
+            Generate Blog Post
+          </button>
+        </div>
+      </div>
     </div>
 
-    <hr class="sep" />
+    <div id="transcript-tab" class="tab-content">
+      <div class="generator-card">
+        <h2 class="generator-title">Generate from Transcript</h2>
+        <p class="generator-desc">
+          <strong>Recommended method:</strong> On YouTube, click the three dots → 
+          <strong>Open transcript</strong> → copy all text → paste here.
+        </p>
+        
+        <div class="form-group">
+          <label for="transcript" class="form-label">Paste Transcript</label>
+          <textarea id="transcript" class="form-textarea" placeholder="Paste the full transcript here..." rows="8"></textarea>
+        </div>
 
-    <h3>Generate from pasted transcript (recommended)</h3>
-    <p class="small">On YouTube: click the three dots → <strong>Open transcript</strong> → copy text → paste here.</p>
-
-    <div class="form-group">
-      <textarea id="transcript" placeholder="Paste transcript here..." rows="10"></textarea>
+        <div class="generator-controls">
+          <select id="ai_model2" class="form-select">
+            <option value="OpenAI">OpenAI (GPT-4)</option>
+          </select>
+          <button onclick="generateFromTranscript()" class="btn btn-primary" id="generate-transcript-btn">
+            <svg class="btn-icon" viewBox="0 0 20 20" fill="currentColor">
+              <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"/>
+            </svg>
+            Generate Blog Post
+          </button>
+        </div>
+      </div>
     </div>
 
-    <div style="display:flex;gap:12px;align-items:center">
-      <select id="ai_model2" style="width:220px;padding:10px;border-radius:8px;border:1px solid #e6e9ee">
-        <option value="OpenAI">OpenAI (GPT-4)</option>
-      </select>
-      <button onclick="generateFromTranscript()" class="btn btn-primary" id="generate-transcript-btn">Generate Blog</button>
-    </div>
-
-    <div id="status-message" style="margin-top:12px"></div>
+    <div id="status-message"></div>
   </div>
 
-  <div class="posts-section" style="margin-top:18px">
-    <h3>Your Posts</h3>
-    <div id="posts-list">
+  <div class="posts-section">
+    <div class="posts-header">
+      <h2 class="posts-title">Your Blog Posts</h2>
+      <p class="posts-count">Manage and edit your generated content</p>
+    </div>
+    <div class="posts-grid" id="posts-list">
       {{posts}}
     </div>
   </div>
 </div>
 
 <script>
+function switchTab(tab) {
+  document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+  
+  if (tab === 'url') {
+    document.querySelector('.tab-button:first-child').classList.add('active');
+    document.getElementById('url-tab').classList.add('active');
+  } else {
+    document.querySelector('.tab-button:last-child').classList.add('active');
+    document.getElementById('transcript-tab').classList.add('active');
+  }
+}
+
 async function generateFromUrl() {
   const url = document.getElementById('youtube_url').value.trim();
   const model = document.getElementById('ai_model').value;
-  if (!url) { alert('Please enter a YouTube URL'); return; }
+  if (!url) {
+    showStatus('Please enter a YouTube URL', 'error');
+    return;
+  }
 
   const btn = document.getElementById('generate-url-btn');
-  btn.disabled = true; btn.textContent = 'Generating...';
-  const status = document.getElementById('status-message');
-  status.innerHTML = '<div class="alert alert-info">Processing video... this may take a minute.</div>';
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>Generating...';
+  showStatus('Processing YouTube video... This may take a minute.', 'info');
 
   try {
     const res = await fetch('/generate', {
       method: 'POST',
-      headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({ youtube_url: url, ai_model: model })
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({youtube_url: url, ai_model: model})
     });
     const data = await res.json();
     if (data.success) {
-      status.innerHTML = `<div class="alert alert-success">Blog generated — <a href="/posts/${data.postId}/edit">Edit</a></div>`;
-      setTimeout(()=>location.reload(),1500);
+      showStatus(`✓ Blog post generated! <a href="/posts/${data.postId}/edit" class="alert-link">Edit now →</a>`, 'success');
+      setTimeout(() => location.reload(), 2000);
     } else {
-      status.innerHTML = `<div class="alert alert-error">${data.error || 'Failed to generate'}</div>`;
+      showStatus(data.error || 'Failed to generate blog post', 'error');
     }
   } catch (e) {
-    status.innerHTML = `<div class="alert alert-error">An error occurred. Try again.</div>`;
+    showStatus('An error occurred. Please try again.', 'error');
   } finally {
-    btn.disabled=false; btn.textContent='Generate Blog';
+    btn.disabled = false;
+    btn.innerHTML = '<svg class="btn-icon" viewBox="0 0 20 20" fill="currentColor"><path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"/></svg>Generate Blog Post';
   }
 }
 
 async function generateFromTranscript() {
   const transcript = document.getElementById('transcript').value.trim();
   const model = document.getElementById('ai_model2').value;
-  if (!transcript) { alert('Please paste the transcript'); return; }
+  if (!transcript) {
+    showStatus('Please paste the transcript', 'error');
+    return;
+  }
 
   const btn = document.getElementById('generate-transcript-btn');
-  btn.disabled=true; btn.textContent='Generating...';
-  const status = document.getElementById('status-message');
-  status.innerHTML = '<div class="alert alert-info">Sending transcript to AI... this may take a moment.</div>';
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>Generating...';
+  showStatus('Processing transcript with AI... This may take a moment.', 'info');
 
   try {
     const res = await fetch('/generate', {
       method: 'POST',
-      headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({ transcript: transcript, ai_model: model })
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({transcript: transcript, ai_model: model})
     });
     const data = await res.json();
     if (data.success) {
-      status.innerHTML = `<div class="alert alert-success">Blog generated — <a href="/posts/${data.postId}/edit">Edit</a></div>`;
-      setTimeout(()=>location.reload(),1500);
+      showStatus(`✓ Blog post generated! <a href="/posts/${data.postId}/edit" class="alert-link">Edit now →</a>`, 'success');
+      setTimeout(() => location.reload(), 2000);
     } else {
-      status.innerHTML = `<div class="alert alert-error">${data.error || 'Failed to generate'}</div>`;
+      showStatus(data.error || 'Failed to generate blog post', 'error');
     }
   } catch (e) {
-    status.innerHTML = `<div class="alert alert-error">An error occurred. Try again.</div>`;
+    showStatus('An error occurred. Please try again.', 'error');
   } finally {
-    btn.disabled=false; btn.textContent='Generate Blog';
+    btn.disabled = false;
+    btn.innerHTML = '<svg class="btn-icon" viewBox="0 0 20 20" fill="currentColor"><path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"/></svg>Generate Blog Post';
   }
+}
+
+function showStatus(message, type) {
+  const status = document.getElementById('status-message');
+  status.innerHTML = `<div class="alert alert-${type}">${message}</div>`;
 }
 </script>

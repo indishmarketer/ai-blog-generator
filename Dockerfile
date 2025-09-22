@@ -1,19 +1,23 @@
-# Dockerfile - simple Node app container
+# Dockerfile
 FROM node:20-alpine
+
+# Install minimal build tools needed by some native deps (better-sqlite3)
+RUN apk add --no-cache python3 make g++ bash
+
 WORKDIR /app
 
-# Copy package.json first so Docker caches npm install step
+# Copy package descriptors first to cache npm install
 COPY package.json package-lock.json* ./
 
 # Install dependencies (production)
 RUN npm install --production
 
-# Copy rest of the repo
+# Copy app source
 COPY . .
 
 # Ensure port envvar default
 ENV PORT=3000
 EXPOSE 3000
 
-# Start the app
+# Start command
 CMD ["npm", "start"]

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Blog Generator from YouTube</title>
+    <link rel="stylesheet" href="/public/styles.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>🤖 AI Blog Generator</h1>
+            <p>Transform YouTube videos into blog posts</p>
+        </div>
+    </header>
+    
+    <main class="container">
+        {{content}}
+    </main>
+    
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 AI Blog Generator. Built with Node.js & OpenAI.</p>
+        </div>
+    </footer>
+    
+    <script>
+        // Copy to clipboard function
+        function copyToClipboard(text) {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            textarea.style.position = 'fixed';
+            textarea.style.opacity = '0';
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+            alert('Copied to clipboard!');
+        }
+        
+        // Download post function
+        function downloadPost(postId) {
+            window.location.href = `/posts/${postId}/download`;
+        }
+    </script>
+</body>
+</html>

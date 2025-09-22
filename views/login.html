@@ -1,23 +1,36 @@
-<div class="auth-container card">
-  <h2>Log In</h2>
-
-  {{#error}}
-  <div class="alert alert-error">{{error}}</div>
-  {{/error}}
-
-  <form method="POST" action="/login" class="auth-form">
-    <div class="form-group">
-      <label for="email">Email Address</label>
-      <input type="email" id="email" name="email" required />
+--- FILE: views/login.html ---
+<div class="auth-page">
+  <div class="auth-card">
+    <div class="auth-header">
+      <h1 class="auth-title">Welcome Back</h1>
+      <p class="auth-subtitle">Sign in to your account</p>
     </div>
 
-    <div class="form-group">
-      <label for="password">Password</label>
-      <input type="password" id="password" name="password" required />
+    {{#error}}
+    <div class="alert alert-error">
+      <svg class="alert-icon" viewBox="0 0 20 20" fill="currentColor">
+        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"/>
+      </svg>
+      <span>{{error}}</span>
     </div>
+    {{/error}}
 
-    <button type="submit" class="btn btn-primary btn-block">Log In</button>
-  </form>
+    <form method="POST" action="/login" class="auth-form">
+      <div class="form-group">
+        <label for="email" class="form-label">Email Address</label>
+        <input type="email" id="email" name="email" class="form-input" placeholder="john@example.com" required>
+      </div>
 
-  <p class="auth-footer small">Don't have an account? <a href="/signup">Sign up</a></p>
+      <div class="form-group">
+        <label for="password" class="form-label">Password</label>
+        <input type="password" id="password" name="password" class="form-input" placeholder="••••••••" required>
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-full">Sign In</button>
+    </form>
+
+    <div class="auth-footer">
+      <p>Don't have an account? <a href="/signup" class="link">Create one</a></p>
+    </div>
+  </div>
 </div>

@@ -1,51 +1,86 @@
-<div class="edit-container card">
-  <h2>Edit Blog Post</h2>
-
-  <div class="edit-actions">
-    <button onclick="savePost()" class="btn btn-primary">Save Changes</button>
-    <button onclick="copyContent()" class="btn">Copy to Clipboard</button>
-    <button onclick="downloadPost({{postId}})" class="btn">Download HTML</button>
-    <a href="/dashboard" class="btn">Back to Dashboard</a>
+--- FILE: views/post_edit.html ---
+<div class="editor-page">
+  <div class="editor-header">
+    <h1 class="editor-title">Edit Blog Post</h1>
+    <div class="editor-actions">
+      <button onclick="savePost()" class="btn btn-primary">
+        <svg class="btn-icon" viewBox="0 0 20 20" fill="currentColor">
+          <path d="M7.707 10.293a1 1 0 10-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 11.586V6h5a2 2 0 012 2v7a2 2 0 01-2 2H4a2 2 0 01-2-2V8a2 2 0 012-2h5v5.586l-1.293-1.293zM9 4a1 1 0 012 0v2H9V4z"/>
+        </svg>
+        Save Changes
+      </button>
+      <button onclick="copyContent()" class="btn btn-secondary">
+        <svg class="btn-icon" viewBox="0 0 20 20" fill="currentColor">
+          <path d="M8 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z"/>
+          <path d="M6 3a2 2 0 00-2 2v11a2 2 0 002 2h8a2 2 0 002-2V5a2 2 0 00-2-2 3 3 0 01-3 3H9a3 3 0 01-3-3z"/>
+        </svg>
+        Copy to Clipboard
+      </button>
+      <button onclick="downloadPost({{postId}})" class="btn btn-secondary">
+        <svg class="btn-icon" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z"/>
+        </svg>
+        Download HTML
+      </button>
+      <a href="/dashboard" class="btn btn-ghost">← Back to Dashboard</a>
+    </div>
   </div>
 
   <div id="save-status"></div>
 
-  <form id="edit-form">
-    <div class="form-group">
-      <label>Title</label>
-      <input type="text" id="title" value="{{title}}" />
+  <div class="editor-layout">
+    <div class="editor-panel">
+      <form id="edit-form" class="editor-form">
+        <div class="form-section">
+          <h2 class="section-title">Basic Information</h2>
+          
+          <div class="form-group">
+            <label for="title" class="form-label">Blog Title</label>
+            <input type="text" id="title" class="form-input" value="{{title}}">
+          </div>
+
+          <div class="form-group">
+            <label for="meta_description" class="form-label">Meta Description (SEO)</label>
+            <textarea id="meta_description" class="form-textarea" rows="3">{{metaDescription}}</textarea>
+            <p class="form-hint">Recommended: 150-160 characters for best SEO results</p>
+          </div>
+
+          <div class="form-group">
+            <label for="seo_keywords" class="form-label">SEO Keywords</label>
+            <input type="text" id="seo_keywords" class="form-input" value="{{seoKeywords}}" placeholder="keyword1, keyword2, keyword3">
+            <p class="form-hint">Separate keywords with commas</p>
+          </div>
+
+          <div class="form-group">
+            <label for="summary" class="form-label">Article Summary</label>
+            <textarea id="summary" class="form-textarea" rows="4">{{summary}}</textarea>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <h2 class="section-title">Content Editor</h2>
+          
+          <div class="form-group">
+            <label for="content_html" class="form-label">HTML Content</label>
+            <textarea id="content_html" class="form-textarea editor-textarea" rows="20">{{content}}</textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="youtube_url" class="form-label">Source YouTube URL</label>
+            <input type="url" id="youtube_url" class="form-input" value="{{youtubeUrl}}" readonly disabled>
+          </div>
+        </div>
+      </form>
     </div>
 
-    <div class="form-group">
-      <label>Meta Description (SEO)</label>
-      <textarea id="meta_description" rows="2">{{metaDescription}}</textarea>
-    </div>
-
-    <div class="form-group">
-      <label>SEO Keywords</label>
-      <input type="text" id="seo_keywords" value="{{seoKeywords}}" />
-    </div>
-
-    <div class="form-group">
-      <label>Summary</label>
-      <textarea id="summary" rows="3">{{summary}}</textarea>
-    </div>
-
-    <div class="form-group">
-      <label>Content (HTML)</label>
-      <textarea id="content_html" rows="20">{{content}}</textarea>
-    </div>
-
-    <div class="form-group">
-      <label>Source YouTube URL</label>
-      <input type="url" value="{{youtubeUrl}}" readonly disabled />
-    </div>
-  </form>
-
-  <div class="preview-section">
-    <h3>Preview</h3>
-    <div id="preview" class="preview-box">
-      {{content}}
+    <div class="preview-panel">
+      <div class="preview-header">
+        <h2 class="section-title">Live Preview</h2>
+        <span class="preview-badge">Updates as you type</span>
+      </div>
+      <div id="preview" class="preview-content">
+        {{content}}
+      </div>
     </div>
   </div>
 </div>
@@ -57,7 +92,7 @@ document.getElementById('content_html').addEventListener('input', function() {
 
 async function savePost() {
   const statusDiv = document.getElementById('save-status');
-  statusDiv.innerHTML = '<div class="alert alert-info">Saving...</div>';
+  statusDiv.innerHTML = '<div class="alert alert-info"><span class="spinner"></span>Saving changes...</div>';
 
   const data = {
     title: document.getElementById('title').value,
@@ -70,17 +105,20 @@ async function savePost() {
   try {
     const response = await fetch('/posts/{{postId}}/save', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {'Content-Type': 'application/json'},
       body: JSON.stringify(data)
     });
     const result = await response.json();
     if (result.success) {
-      statusDiv.innerHTML = '<div class="alert alert-success">Saved successfully!</div>';
+      statusDiv.innerHTML = '<div class="alert alert-success">✓ Changes saved successfully!</div>';
+      setTimeout(() => {
+        statusDiv.innerHTML = '';
+      }, 3000);
     } else {
-      statusDiv.innerHTML = '<div class="alert alert-error">Failed to save</div>';
+      statusDiv.innerHTML = '<div class="alert alert-error">Failed to save changes. Please try again.</div>';
     }
   } catch (error) {
-    statusDiv.innerHTML = '<div class="alert alert-error">An error occurred</div>';
+    statusDiv.innerHTML = '<div class="alert alert-error">An error occurred. Please try again.</div>';
   }
 }
 

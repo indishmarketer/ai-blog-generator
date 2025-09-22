@@ -1,10 +1,8 @@
-<div class="verify-container">
-    <div class="alert alert-{{type}}">
-        <h2>{{#type}}{{#success}}✅{{/success}}{{#error}}❌{{/error}}{{/type}} Email Verification</h2>
-        <p>{{message}}</p>
-        
-        {{#showLogin}}
-        <a href="/login" class="btn btn-primary">Go to Login</a>
-        {{/showLogin}}
-    </div>
-</div>
+<section>
+  <h2>Verification</h2>
+  <p>{{message}}</p>
+  {{#if showLogin}}
+  <p><a href="/login" class="btn">Login</a></p>
+  {{/if}}
+  <p><a href="/">Go home</a></p>
+</section>

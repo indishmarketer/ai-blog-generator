@@ -101,6 +101,7 @@ In Coolify, go to Environment Variables tab and add:
 # Required Variables
 JWT_SECRET=generate-a-32-character-random-string-here
 OPENAI_API_KEY=sk-your-openai-api-key
+OPENAI_MODEL=gpt-4o-mini
 
 # Brevo SMTP
 SMTP_HOST=smtp-relay.brevo.com
@@ -317,3 +318,4 @@ If you encounter issues:
 MIT License - Feel free to use and modify!
 
 Built with ❤️ using Node.js, Express, SQLite, and OpenAI
+
